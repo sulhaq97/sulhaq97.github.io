@@ -14,6 +14,13 @@
         <link href="https://fonts.googleapis.com/css?family=Muli:400,400i,800,800i" rel="stylesheet" type="text/css" />
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
+        
+        <!-- Leaflet.js CSS -->
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-o1U7HUO+LDySRz+4wBC01JAsKu+e52Ocv7r3j0I8cZ70R3jzrWbQzVGtd5RVlONQ" crossorigin=""/>
+        
+        <!-- Leaflet.js JS -->
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-2/bn7cBdFOL4WjxNNB7ruIObVGlpQ1ST3v/4NjjL88TzFifEEmT5mg5lC9H4FzqM" crossorigin=""></script>
+
     </head>
     <body id="page-top">
         <!-- Navigation-->
@@ -327,7 +334,98 @@
                     </ul>
                 </div>
             </section>
+
+            <hr class="m-0" />
+            <!-- Conferences -->
+            <section class="resume-section" id="conferences">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Conferences</h2>
+                    
+                    <!-- Map Container -->
+                    <div id="conference-map" style="height: 500px; width: 100%;"></div>
+                </div>
+            </section>
             
+            <!-- Leaflet CSS -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            
+            <!-- Leaflet JS -->
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            
+            <script>
+                // Initialize the map
+                const map = L.map('conference-map').setView([30, 0], 2); // Centered on the world
+            
+                // Add a tile layer (map background)
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors'
+                }).addTo(map);
+            
+                // Conference data
+                const conferences = [
+                    {
+                        name: "AACR Annual Meeting 2022",
+                        date: "April 2022",
+                        location: [29.9511, -90.0715] // New Orleans, USA
+                    },
+                    {
+                        name: "IASLC World Lung Conference 2022",
+                        date: "August 2022",
+                        location: [48.2082, 16.3738] // Vienna, Austria
+                    },
+                    {
+                        name: "ESMO Congress 2023",
+                        date: "September 2023",
+                        location: [40.4167, -3.7033] // Madrid
+                    },
+                    {
+                        name: "ACMG Annual Meeting 2024",
+                        date: "March 2024",
+                        location: [43.6532, -79.3832] // Toronto
+                    },
+                    {
+                        name: "AACR Annual Meeting 2024",
+                        date: "April 2024",
+                        location: [32.7157, -117.1611] // San Diego, USA
+                    },
+                    {
+                        name: "ASCO Annual Meeting 2025",
+                        date: "May 2025",
+                        location: [41.8781, -87.6298] // Chicago, USA
+                    }
+
+                    
+                    // Template for additional conferences
+                    // {
+                    //     name: "Conference Name",
+                    //     date: "Month Year",
+                    //     location: [Latitude, Longitude] // City, Country
+                    // }
+
+                ];
+            
+                // Define a generic pin icon
+                const genericPinIcon = L.icon({
+                    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                    iconSize: [25, 41],
+                    iconAnchor: [12, 41],
+                    popupAnchor: [1, -34]
+                });
+            
+                // Add markers for each conference
+                conferences.forEach(conference => {
+                    const marker = L.marker(conference.location, { icon: genericPinIcon }).addTo(map);
+            
+                    // Add a popup with conference details
+                    marker.bindPopup(`
+                        <strong>${conference.name}</strong><br>
+                        <em>Attended: ${conference.date}</em>
+                    `);
+                });
+            </script>
+
+
             
             <hr class="m-0" />
             <!-- Skills-->
@@ -815,10 +913,6 @@
 
             
         </div>
-        
-        <!-- Bootstrap core JS-->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-        <!-- Core theme JS-->
-        <script src="js/scripts.js"></script>
+
     </body>
 </html>
