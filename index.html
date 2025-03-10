@@ -15,11 +15,18 @@
         <!-- Core theme CSS (includes Bootstrap)-->
         <link href="css/styles.css" rel="stylesheet" />
         
+        <!-- For the map section in the conference -->
         <!-- Leaflet.js CSS -->
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-o1U7HUO+LDySRz+4wBC01JAsKu+e52Ocv7r3j0I8cZ70R3jzrWbQzVGtd5RVlONQ" crossorigin=""/>
         
         <!-- Leaflet.js JS -->
         <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-2/bn7cBdFOL4WjxNNB7ruIObVGlpQ1ST3v/4NjjL88TzFifEEmT5mg5lC9H4FzqM" crossorigin=""></script>
+        
+        <!-- for the carousel -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+        <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
+
 
     </head>
     <body id="page-top">
@@ -255,7 +262,7 @@
                   </div>
                   
                 <script>
-                  // JavaScript to toggle visibility of older awards
+                  // JavaScript to toggle visibility of older research
                   document.getElementById('see-older-research-button').addEventListener('click', function() {
                       const olderAwards = document.getElementById('older-research');
                       if (olderAwards.style.display === 'none') {
@@ -269,7 +276,6 @@
               </script>
 
             </section>
-
             
 
             <hr class="m-0" />
@@ -369,88 +375,142 @@
                     <!-- Map Container -->
                     <div id="conference-map" style="height: 500px; width: 100%;"></div>
                 </div>
+                
+                <!-- Leaflet CSS -->
+                <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+                
+                <!-- Leaflet JS -->
+                <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+                
+                <!-- script for map -->
+                <script>
+                    // Initialize the map
+                    const map = L.map('conference-map').setView([30, 0], 2); // Centered on the world
+                
+                    // Add a tile layer (map background)
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '© OpenStreetMap contributors'
+                    }).addTo(map);
+                
+                    // Conference data
+                    const conferences = [
+                        {
+                            name: "AACR Annual Meeting 2022",
+                            date: "April 2022",
+                            location: [29.9511, -90.0715] // New Orleans, USA
+                        },
+                        {
+                            name: "IASLC World Lung Conference 2022",
+                            date: "August 2022",
+                            location: [48.2082, 16.3738] // Vienna, Austria
+                        },
+                        {
+                            name: "ESMO Congress 2023",
+                            date: "September 2023",
+                            location: [40.4167, -3.7033] // Madrid
+                        },
+                        {
+                            name: "ACMG Annual Meeting 2024",
+                            date: "March 2024",
+                            location: [43.6532, -79.3832] // Toronto
+                        },
+                        {
+                            name: "AACR Annual Meeting 2024",
+                            date: "April 2024",
+                            location: [32.7157, -117.1611] // San Diego, USA
+                        },
+                        {
+                            name: "ASCO Annual Meeting 2025",
+                            date: "May 2025",
+                            location: [41.8781, -87.6298] // Chicago, USA
+                        }
+    
+                        
+                        // Template for additional conferences
+                        // {
+                        //     name: "Conference Name",
+                        //     date: "Month Year",
+                        //     location: [Latitude, Longitude] // City, Country
+                        // }
+    
+                    ];
+                
+                    // Define a generic pin icon
+                    const genericPinIcon = L.icon({
+                        iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
+                        shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
+                        iconSize: [25, 41],
+                        iconAnchor: [12, 41],
+                        popupAnchor: [1, -34]
+                    });
+                
+                    // Add markers for each conference
+                    conferences.forEach(conference => {
+                        const marker = L.marker(conference.location, { icon: genericPinIcon }).addTo(map);
+                
+                        // Add a popup with conference details
+                        marker.bindPopup(`
+                            <strong>${conference.name}</strong><br>
+                            <em>Attended: ${conference.date}</em>
+                        `);
+                    });
+                </script>
+                
+            </section>
+
+
+
+            <hr class="m-0" />
+            <!-- Conferences -->
+            <section class="resume-section" id="posters">
+                <div class="resume-section-content">
+                    <h2 class="mb-5">Posters</h2>
+                    
+                      <div class="swiper">
+                          <div class="swiper-wrapper">
+                              <canvas class="swiper-slide pdf-viewer" data-pdf="posters/pdf1.pdf"></canvas>
+                              <canvas class="swiper-slide pdf-viewer" data-pdf="posters/pdf2.pdf"></canvas>
+                              <canvas class="swiper-slide pdf-viewer" data-pdf="posters/pdf4.pdf"></canvas>
+                              <canvas class="swiper-slide pdf-viewer" data-pdf="posters/pdf5.pdf"></canvas>
+                          </div>
+                          <div class="swiper-button-next"></div>
+                          <div class="swiper-button-prev"></div>
+                      </div>
+
+                </div>
+                
+                <!-- script for posters carousel -->
+                <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const pdfjsLib = window["pdfjs-dist/build/pdf"];
+                    pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js";
+                
+                    function renderPDF(pdfUrl, canvasElement) {
+                        pdfjsLib.getDocument(pdfUrl).promise.then(pdf => {
+                            return pdf.getPage(1);
+                        }).then(page => {
+                            const context = canvasElement.getContext("2d");
+                            const viewport = page.getViewport({ scale: 1.5 });
+                            canvasElement.width = viewport.width;
+                            canvasElement.height = viewport.height;
+                            page.render({ canvasContext: context, viewport: viewport });
+                        });
+                    }
+                
+                    document.querySelectorAll(".pdf-viewer").forEach(canvas => {
+                        const pdfUrl = canvas.getAttribute("data-pdf");
+                        renderPDF(pdfUrl, canvas);
+                    });
+                
+                    new Swiper('.swiper', {
+                        navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
+                        loop: true,
+                    });
+                });
+                </script>
+
             </section>
             
-            <!-- Leaflet CSS -->
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-            
-            <!-- Leaflet JS -->
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-            
-            <script>
-                // Initialize the map
-                const map = L.map('conference-map').setView([30, 0], 2); // Centered on the world
-            
-                // Add a tile layer (map background)
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                    attribution: '© OpenStreetMap contributors'
-                }).addTo(map);
-            
-                // Conference data
-                const conferences = [
-                    {
-                        name: "AACR Annual Meeting 2022",
-                        date: "April 2022",
-                        location: [29.9511, -90.0715] // New Orleans, USA
-                    },
-                    {
-                        name: "IASLC World Lung Conference 2022",
-                        date: "August 2022",
-                        location: [48.2082, 16.3738] // Vienna, Austria
-                    },
-                    {
-                        name: "ESMO Congress 2023",
-                        date: "September 2023",
-                        location: [40.4167, -3.7033] // Madrid
-                    },
-                    {
-                        name: "ACMG Annual Meeting 2024",
-                        date: "March 2024",
-                        location: [43.6532, -79.3832] // Toronto
-                    },
-                    {
-                        name: "AACR Annual Meeting 2024",
-                        date: "April 2024",
-                        location: [32.7157, -117.1611] // San Diego, USA
-                    },
-                    {
-                        name: "ASCO Annual Meeting 2025",
-                        date: "May 2025",
-                        location: [41.8781, -87.6298] // Chicago, USA
-                    }
-
-                    
-                    // Template for additional conferences
-                    // {
-                    //     name: "Conference Name",
-                    //     date: "Month Year",
-                    //     location: [Latitude, Longitude] // City, Country
-                    // }
-
-                ];
-            
-                // Define a generic pin icon
-                const genericPinIcon = L.icon({
-                    iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
-                    shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
-                    iconSize: [25, 41],
-                    iconAnchor: [12, 41],
-                    popupAnchor: [1, -34]
-                });
-            
-                // Add markers for each conference
-                conferences.forEach(conference => {
-                    const marker = L.marker(conference.location, { icon: genericPinIcon }).addTo(map);
-            
-                    // Add a popup with conference details
-                    marker.bindPopup(`
-                        <strong>${conference.name}</strong><br>
-                        <em>Attended: ${conference.date}</em>
-                    `);
-                });
-            </script>
-
-
             
             <hr class="m-0" />
             <!-- Skills-->
@@ -497,12 +557,12 @@
                     <h2 class="mb-5">Awards</h2>
                     <ul class="fa-ul mb-0" id="awards-list">
                         <!-- Awards from October 2019 onwards -->
-                        <!-- <li>
+                        <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
                             <strong>June 2025 - Summer Research Training Program ($5000)</strong>
                             <br>
                             <em>Awarded for conducting summer research examining LLM in classifying oncogenic variants in pan-cancer patients.</em>
-                        </li> -->
+                        </li>
                         <li>
                             <span class="fa-li"><i class="fas fa-trophy text-warning"></i></span>
                             <strong>June 2024 - Summer Research Training Program ($5000)</strong>
