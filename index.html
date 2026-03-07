@@ -26,9 +26,13 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
         <script src="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.js"></script>
-
+    
+        <!-- Word document export -->
+        <script src="https://cdn.jsdelivr.net/npm/html-docx-js@0.3.1/dist/html-docx.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
 
     </head>
+    
     <body id="page-top">
         <!-- Navigation-->
         <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top" id="sideNav">
@@ -71,6 +75,11 @@
                         <a class="social-icon" href="https://github.com/sulhaq97"><i class="fab fa-github"></i></a>
                         <a class="social-icon" href="https://www.researchgate.net/profile/Sami-Ul-Haq-10?ev=hdr_xprf"><i class="fa-brands fa-researchgate"></i></a>
                     </div>
+                        
+                    <button id="downloadCV" class="btn btn-primary mt-4">
+                        <i class="fas fa-file-word me-2"></i> Download CV as Word
+                    </button>
+
                 </div>
             </section>
 
@@ -482,7 +491,7 @@
                         },
                         {
                              name: "KCA Annual Meeting 2025",
-                             date: "July 2025",
+                             date: "July 2026",
                              location: [37.56, 126.97] // Seoul, South Korea
                         }
 
@@ -1084,6 +1093,51 @@
 
             
         </div>
+        
+        <!-- This script is needed to convert the cv to word docx -->
+        <script>
+            document.getElementById('downloadCV').addEventListener('click', function () {
+                // Clone only the main content, not the nav
+                const sections = document.querySelector('.container-fluid').cloneNode(true);
+        
+                // Remove the download button from the clone so it doesn't appear in the doc
+                const btn = sections.querySelector('#downloadCV');
+                if (btn) btn.parentElement.removeChild(btn);
+        
+                // Remove the map div (can't render in Word)
+                const map = sections.querySelector('#conference-map');
+                if (map) map.parentElement.removeChild(map);
+        
+                // Remove the poster carousel (PDFs can't render in Word)
+                const posters = sections.querySelector('#posters');
+                if (posters) posters.parentElement.removeChild(posters);
+        
+                const htmlContent = `
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <meta charset="UTF-8">
+                        <style>
+                            body { font-family: Calibri, Arial, sans-serif; margin: 40px; }
+                            h1 { font-size: 36px; color: #20c997; }
+                            h2 { font-size: 22px; color: #20c997; border-bottom: 1px solid #20c997; padding-bottom: 4px; margin-top: 30px; }
+                            h3 { font-size: 16px; color: #212529; margin-bottom: 2px; }
+                            .subheading { font-style: italic; color: #6c757d; }
+                            .text-primary { color: #20c997; }
+                            a { color: #20c997; text-decoration: none; }
+                            ul { margin-top: 4px; }
+                            li { margin-bottom: 3px; }
+                        </style>
+                    </head>
+                    <body>${sections.innerHTML}</body>
+                    </html>
+                `;
+        
+                const blob = htmlDocx.asBlob(htmlContent);
+                saveAs(blob, 'Sami_Ul_Haq_CV.docx');
+            });
+        </script>
 
+        
     </body>
 </html>
